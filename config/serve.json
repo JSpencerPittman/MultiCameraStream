@@ -1,0 +1,16 @@
+{
+    "cameras": [
+        {
+            "CameraName": "Donald",
+            "URI": "videos/donny.mp4",
+            "Host": "127.0.0.1",
+            "Port": 999
+        },
+        {
+            "CameraName": "Stacy",
+            "URI": "videos/stacy.mp4",
+            "Host": "127.0.0.1",
+            "Port": 998
+        }
+    ]
+}

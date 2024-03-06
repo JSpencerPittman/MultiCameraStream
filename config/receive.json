@@ -1,0 +1,14 @@
+{
+    "cameras": [
+        {
+            "CameraName": "Donald",
+            "Host": "127.0.0.1",
+            "Port": 999
+        },
+        {
+            "CameraName": "Stacy",
+            "Host": "127.0.0.1",
+            "Port": 998
+        }
+    ]
+}
