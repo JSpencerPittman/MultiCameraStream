@@ -23,6 +23,7 @@ class Producer(object):
         self._frames = Queue(MAX_FRAME_POOL_SIZE)
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._base_packet = RTP()
+        self._resize = camera.resize
 
         self._lifeline = lifeline
         self._active = threading.Event()
@@ -75,6 +76,10 @@ class Producer(object):
             return
 
         frame = self._frames.get_nowait()
+
+        if self._resize is not None:
+            frame = cv2.resize(frame, self._resize)
+
         d = frame.flatten()
         s = d.tobytes()
 

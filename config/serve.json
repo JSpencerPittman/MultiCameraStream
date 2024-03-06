@@ -4,7 +4,8 @@
             "CameraName": "Donald",
             "URI": "videos/donny.mp4",
             "Host": "127.0.0.1",
-            "Port": 999
+            "Port": 999,
+            "Resize": [300, 300]
         },
         {
             "CameraName": "Stacy",
