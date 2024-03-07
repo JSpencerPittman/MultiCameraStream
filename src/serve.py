@@ -14,6 +14,8 @@ camera_config_path = "config/serve.json"
 with open(camera_config_path) as config_file:
     config_json = json.load(config_file)
     cameras = [Camera.from_json(c) for c in config_json["cameras"]]
+    for c in cameras:
+        c.resize = config_json["FrameSize"]
 
 lifeline = threading.Event()
 
