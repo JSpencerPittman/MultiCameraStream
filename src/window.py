@@ -1,13 +1,13 @@
 import numpy as np
 import cv2
 import math
-from consumer import Consumer
+import multiprocessing
 
 
 class Window(object):
     def __init__(self, n_windows, frame_size):
         self._n_windows = n_windows
-        self._consumers = [None] * self._n_windows
+        self._frame_buffers = [None] * self._n_windows
         self._frame_size = frame_size
 
         self._rows = min(n_windows, 2)
@@ -18,14 +18,16 @@ class Window(object):
         self._display = np.zeros(
             (self._height, self._width, 3), dtype=np.uint8)
 
-    def synchronize(self, win_idx, consumer: Consumer):
-        self._consumers[win_idx] = consumer
+    def synchronize(self, win_idx, frame_buffer: multiprocessing.Queue):
+        self._frame_buffers[win_idx] = frame_buffer
 
     def update_subwindow(self, win_idx):
-        if self._consumers[win_idx] is None:
+        if self._frame_buffers[win_idx] is None:
+            return
+        if self._frame_buffers[win_idx].qsize() == 0:
             return
 
-        new_frame = self._consumers[win_idx].retrieve()
+        new_frame = self._frame_buffers[win_idx].get()
 
         row = win_idx % 2
         col = win_idx // 2

@@ -1,10 +1,8 @@
+import multiprocessing
 import numpy as np
 import socket
-import cv2
 from rtp import RTP
 from camera import Camera
-import threading
-from queue import Queue
 
 ### ----- Constants ----- #####
 
@@ -48,14 +46,14 @@ class ImageReconstruct(object):
 
 
 class Consumer(object):
-    def __init__(self, camera: Camera, lifeline: threading.Event):
+    def __init__(self, camera: Camera, lifeline: multiprocessing.Event, frame_buffer: multiprocessing.Queue):
         self._reconstruct = ImageReconstruct()
         self._host = camera.host
         self._port = camera.port
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._socket.setblocking(False)
         self._socket.bind((camera.host, camera.port))
-        self._received_frames = Queue(MAX_FRAME_POOL_SIZE)
+        self._received_frames = frame_buffer
         self._lifeline = lifeline
 
     def start(self):
