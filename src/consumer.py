@@ -1,6 +1,6 @@
 import numpy as np
 import socket
-import cv2
+import time
 from rtp import RTP
 from camera import Camera
 import threading
@@ -10,6 +10,7 @@ from queue import Queue
 
 MAX_FRAME_POOL_SIZE = 10
 BUFFER_SIZE = 65535
+FPS_LOG_FREQ = 10
 
 ##### ------------------- #####
 
@@ -52,13 +53,19 @@ class Consumer(object):
         self._reconstruct = ImageReconstruct()
         self._host = camera.host
         self._port = camera.port
+        self._name = camera.name
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._socket.setblocking(False)
         self._socket.bind((camera.host, camera.port))
         self._received_frames = Queue(MAX_FRAME_POOL_SIZE)
         self._lifeline = lifeline
 
+        ### BENCHMARK ###
+        self._duration = 0
+        self._frame_cnt = 0
+
     def start(self):
+        start_time = time.time()
         while not self._lifeline.is_set():
             try:
                 chunk, _ = self._socket.recvfrom(BUFFER_SIZE)
@@ -75,6 +82,15 @@ class Consumer(object):
                     self._received_frames.get()
                 self._received_frames.put(frame)
                 self._reconstruct.reset()
+
+                self._duration += time.time() - start_time
+                self._frame_cnt += 1
+
+                if self._frame_cnt % FPS_LOG_FREQ == 0:
+                    print(f"""CAMERA: {self._name} FPS: {
+                        round(self._frame_cnt / self._duration, 2)}""")
+
+                start_time = time.time()
 
     def retrieve(self):
         return self._received_frames.get()
