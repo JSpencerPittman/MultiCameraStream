@@ -22,8 +22,7 @@ class Camera(object):
 
     def __str__(self):
         uri_mention = f" from {self.uri}" if self.uri is not None else ""
-        res_mention = f" resized to {
-            self.resize}" if self.resize is not None else ""
+        res_mention = f" resized to {self.resize}" if self.resize is not None else ""
         return f"{self.name} on rtp:{self.host}:{self.port}{uri_mention}{res_mention}"
 
     def __repr__(self):
