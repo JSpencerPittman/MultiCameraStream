@@ -3,12 +3,12 @@
         {
             "CameraName": "Donald",
             "Host": "127.0.0.1",
-            "Port": 999
+            "Port": 5001
         },
         {
             "CameraName": "Stacy",
             "Host": "127.0.0.1",
-            "Port": 998
+            "Port": 5002
         }
     ],
     "FrameSize": [300, 300]
