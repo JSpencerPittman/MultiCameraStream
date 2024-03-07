@@ -1,17 +1,10 @@
 {
     "cameras": [
         {
-            "CameraName": "Donald",
-            "URI": "videos/donny.mp4",
+            "CameraName": "Juniper",
+            "URI": "/dev/video0",
             "Host": "127.0.0.1",
-            "Port": 999,
-            "Resize": [300, 300]
-        },
-        {
-            "CameraName": "Stacy",
-            "URI": "videos/stacy.mp4",
-            "Host": "127.0.0.1",
-            "Port": 998
+            "Port": 999
         }
     ]
 }
