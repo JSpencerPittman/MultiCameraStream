@@ -11,6 +11,7 @@ from copy import deepcopy
 
 MAX_FRAME_POOL_SIZE = 10
 CHUNK_SIZE = 64000
+FPS_LOG_FREQ = 10
 
 ##### ------------------- #####
 
@@ -20,6 +21,7 @@ class Producer(object):
         self._src = camera.uri
         self._host = camera.host
         self._port = camera.port
+        self._name = camera.name
         self._frames = Queue(MAX_FRAME_POOL_SIZE)
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._base_packet = RTP()
@@ -27,6 +29,10 @@ class Producer(object):
 
         self._lifeline = lifeline
         self._active = threading.Event()
+
+        ### BENCHMARK ###
+        self._duration = 0
+        self._frame_cnt = 0
 
     def start(self):
         cap = cv2.VideoCapture(self._src)
@@ -75,6 +81,8 @@ class Producer(object):
         if self._frames.empty():
             return
 
+        start_time = time.time()
+
         frame = self._frames.get_nowait()
 
         if self._resize is not None:
@@ -98,6 +106,13 @@ class Producer(object):
             packet.ssrc = len(chunks)
             packet.payload = bytearray(chunk)
             self._socket.sendto(packet.toBytes(), (self._host, self._port))
+
+        self._duration += time.time() - start_time
+        self._frame_cnt += 1
+
+        if self._frame_cnt % FPS_LOG_FREQ == 0:
+            print(f"""CAMERA: {self._name} FPS: {
+                  round(self._frame_cnt / self._duration, 2)}""")
 
     @staticmethod
     def chunk_data(data):
